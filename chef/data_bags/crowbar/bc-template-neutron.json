@@ -25,8 +25,9 @@
       "verbose": true,
       "dhcp_domain": "openstack.local",
       "use_lbaas": true,
-      "networking_mode": "gre",
-      "networking_plugin": "openvswitch",
+      "networking_plugin": "ml2",
+      "ml2_mechanism_drivers": ["openvswitch"],
+      "ml2_type_drivers": ["gre", "vlan"],
       "num_vlans": 2000,
       "allow_overlapping_ips": true,
       "use_syslog": false,
@@ -67,7 +68,7 @@
     "neutron": {
       "crowbar-revision": 0,
       "crowbar-applied": false,
-      "schema-revision": 21,
+      "schema-revision": 22,
       "element_states": {
         "neutron-server": [ "readying", "ready", "applying" ],
         "neutron-l3": [ "readying", "ready", "applying" ]

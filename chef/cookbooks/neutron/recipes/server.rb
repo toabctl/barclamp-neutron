@@ -149,12 +149,6 @@ vlan_start = node[:network][:networks][:nova_fixed][:vlan]
 num_vlans = node[:neutron][:num_vlans]
 vlan_end = [vlan_start + num_vlans - 1, 4094].min
 
-if node[:neutron][:networking_plugin] == "cisco"
-  mechanism_driver = "openvswitch,cisco_nexus"
-else
-  mechanism_driver = node[:neutron][:networking_plugin]
-end
-
 directory "/etc/neutron/plugins/ml2" do
   mode 0755
   action :create
@@ -167,8 +161,8 @@ template plugin_cfg_path do
   group node[:neutron][:platform][:group]
   mode "0640"
   variables(
-    :networking_mode => node[:neutron][:networking_mode],
-    :mechanism_driver => mechanism_driver,
+    :ml2_mechanism_drivers => node[:neutron][:ml2_mechanism_drivers],
+    :ml2_type_drivers => node[:neutron][:ml2_type_drivers],
     :vlan_start => vlan_start,
     :vlan_end => vlan_end
   )
@@ -176,7 +170,7 @@ template plugin_cfg_path do
 end
 
 
-if node[:neutron][:networking_plugin] == "cisco"
+if node[:neutron][:networking_plugin] == "ml2" and node[:neutron][:ml2_mechanism_drivers].include?("cisco_nexus")
   include_recipe "neutron::cisco_support"
 end
 
