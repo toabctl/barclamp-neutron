@@ -175,12 +175,6 @@ if %w(redhat centos).include?(node.platform)
   end
 end
 
-
-vlan_start = node[:network][:networks][:nova_fixed][:vlan]
-num_vlans = neutron[:neutron][:num_vlans]
-vlan_end = [vlan_start + num_vlans - 1, 4094].min
-
-
 case neutron[:neutron][:networking_plugin]
 when 'ml2'
   ml2_mech_drivers = neutron[:neutron][:ml2_mechanism_drivers]
@@ -205,8 +199,6 @@ when 'ml2'
       mode "0640"
       variables(
         :ml2_type_drivers => neutron[:neutron][:ml2_type_drivers],
-        :vlan_start => vlan_start,
-        :vlan_end => vlan_end
       )
     end
   when ml2_mech_drivers.include?("linuxbridge")
@@ -229,8 +221,6 @@ when 'ml2'
       mode "0640"
       variables(
         :physnet => (node[:crowbar_wall][:network][:nets][:nova_fixed].first rescue nil),
-        :vlan_start => vlan_start,
-        :vlan_end => vlan_end
       )
     end
   end
